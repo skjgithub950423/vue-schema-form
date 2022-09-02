@@ -20,6 +20,25 @@ const columns: IColumn[] = [
     },
   },
   {
+    name:['title'],
+    valueType:'dependency',
+    column: ([title]) => {
+      return title === 'a' ? [{
+        label: title || '联动',
+        valueType: 'text',
+        dataIndex: 'dep'
+      },{
+        label: 'ttt',
+        valueType: 'text',
+        dataIndex: 'haha'
+      }] : [{
+        label: 'zzz',
+        valueType: 'datetime',
+        dataIndex: 'time'
+      }]
+    }
+  },
+  {
     label: '状态',
     dataIndex: 'state',
     valueType: 'number',
