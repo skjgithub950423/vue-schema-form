@@ -7,10 +7,6 @@ const columns: IColumn[] = [
     dataIndex: 'title',
     valueType: 'text',
     formItemProps: {
-      placeholder: 'haha',
-      type: 'textarea',
-      // disabled: true,
-      showPassword:true,
       rules: [
         {
           required: true,
@@ -18,6 +14,13 @@ const columns: IColumn[] = [
         },
       ],
     },
+    fieldProps:{
+      placeholder: 'haha',
+      type: 'textarea',
+      // disabled: true,
+      showPassword:true,
+    }
+
   },
   {
     name:['title'],

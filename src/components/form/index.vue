@@ -3,81 +3,24 @@
     <el-form-item
       v-for="{
         dataIndex,
-        formItemProps = {},
+        fieldProps = {},
         valueType,
-        ...restColumn
+        formItemProps = {},
+        ...restColumns
       } in stateCol"
       v-bind:key="dataIndex"
       :prop="dataIndex"
-      :rules="formItemProps.rules || []"
-      v-bind="restColumn"
+      v-bind="{
+        ...formItemProps,
+        ...restColumns
+      }"
     >
       <pro-field
         :dataIndex="dataIndex"
         :type="valueType"
-        :formItemProps="formItemProps"
+        :fieldProps="fieldProps"
         @value-change="handleValueChange"
       ></pro-field>
-      <!-- <el-input
-        v-if="valueType === 'text'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-input>
-      <el-input-number
-        v-else-if="valueType === 'number'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-input-number>
-      <el-select
-        v-else-if="valueType === 'select'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-select>
-      <el-radio-group
-        v-else-if="valueType === 'radio'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-radio-group>
-      <el-checkbox-group
-        v-else-if="valueType === 'checkbox'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-checkbox-group>
-      <el-cascader
-        v-else-if="valueType === 'cascader'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-cascader>
-      <el-switch
-        v-else-if="valueType === 'switch'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-switch>
-      <el-slider
-        v-else-if="valueType === 'slider'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-slider>
-      <el-time-select
-        v-else-if="valueType === 'time'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-time-select>
-      <el-date-picker
-        v-else-if="valueType === 'date' || 'datetime'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-date-picker>
-      <el-upload
-        v-else-if="valueType === 'upload'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-upload>
-      <el-rate
-        v-else-if="valueType === 'rate'"
-        v-model="form[dataIndex]"
-        v-bind="formItemProps || {}"
-      ></el-rate> -->
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submitForm(proFormRef)"
@@ -98,6 +41,9 @@ export interface IColumn {
   name?: string[];
   column?: (val: any) => IColumn[];
   formItemProps?: IFormItemProps;
+  fieldProps?: {
+    [propsName:string] :any
+  }
 }
 
 import { watch, onBeforeMount, reactive, ref, computed, onMounted } from 'vue';
@@ -138,7 +84,7 @@ let form = reactive<{
 const proFormRef = ref<FormInstance>();
 const stateCol = ref<any[]>([]);
 
-const updateColumns = (sort,columns) => {
+const updateColumns = (sort:number,columns:any[]) => {
   // 看动态生成的column是否已经添加过
   let hasAddInColumns = false
   let addColumnsNum = 0
@@ -214,9 +160,5 @@ onBeforeMount(() => {
     }
   });
   console.log(stateCol,'-----stateCol')
-});
-
-watch(form, () => {
-  console.log(form, '-----formVal');
 });
 </script>

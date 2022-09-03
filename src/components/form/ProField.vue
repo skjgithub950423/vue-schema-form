@@ -2,62 +2,62 @@
   <el-input
     v-if="props.type === 'text'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-input>
   <el-input-number
     v-else-if="props.type === 'number'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-input-number>
   <el-select
     v-else-if="props.type === 'select'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-select>
   <el-radio-group
     v-else-if="props.type === 'radio'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-radio-group>
   <el-checkbox-group
     v-else-if="props.type === 'checkbox'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-checkbox-group>
   <el-cascader
     v-else-if="props.type === 'cascader'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-cascader>
   <el-switch
     v-else-if="props.type === 'switch'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-switch>
   <el-slider
     v-else-if="props.type === 'slider'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-slider>
   <el-time-select
     v-else-if="props.type === 'time'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-time-select>
   <el-date-picker
     v-else-if="props.type === 'date' || 'datetime'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-date-picker>
   <el-upload
     v-else-if="props.type === 'upload'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-upload>
   <el-rate
     v-else-if="props.type === 'rate'"
     v-model="fieldValue"
-    v-bind="props.formItemProps || {}"
+    v-bind="props.fieldProps || {}"
   ></el-rate>
 </template>
 
@@ -67,7 +67,7 @@ import type { FieldType } from './interface'
 const props = defineProps<{
   type: FieldType
   dataIndex: string
-  formItemProps:
+  fieldProps:
     | {
         [propsName: string]: any
       }
