@@ -27,7 +27,7 @@ const columns: IColumn[] = [
     valueType:'dependency',
     column: ([title]) => {
       return title === 'a' ? [{
-        label: title || '联动',
+        label: title,
         valueType: 'text',
         dataIndex: 'dep'
       },{
@@ -46,6 +46,28 @@ const columns: IColumn[] = [
     dataIndex: 'state',
     valueType: 'number',
   },
+  {
+    label: '哈哈',
+    valueType: 'text',
+    dataIndex: 'heihei',
+    dependencies:['title'],
+    formItemProps: (form:any) => {
+      return !form.title ? {
+        rules:[
+          {
+            required:false
+          }
+        ]
+      }:{
+        rules:[
+        {
+          required: true,
+          message: '此项为必填项',
+        },
+        ]
+      }
+    },
+  }
 ];
 </script>
 
