@@ -11,7 +11,7 @@ const promise = () => {
         label: 'bbb',
         value: 'bbb'
       }])
-    },1000)
+    },5000)
   })
 }
 const test = async (form) => {

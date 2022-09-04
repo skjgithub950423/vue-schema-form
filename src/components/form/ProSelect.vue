@@ -1,5 +1,9 @@
 <template>
-  <el-select :value="modelValue" @change="handleValueChange" :loading="loading">
+  <el-select
+    v-model="value"
+    @change="handleValueChange"
+    :loading="loading"
+  >
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -10,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeMount, ref, watch } from 'vue';
+import { inject, onBeforeMount, ref, watch, computed } from 'vue';
 export interface IOption {
   label: string;
   value: any;
@@ -22,34 +26,44 @@ const props = defineProps<{
   request?: (value: any) => IOption[];
   [propsName: string]: any;
 }>();
+// const props = defineProps(['modelValue', 'dependencies', 'request']);
 const emits = defineEmits(['update:modelValue']);
 let options = ref([]);
 const loading = ref(false);
-const form = inject('form')
+const form = inject('form');
 
 const handleValueChange = (val: any) => {
   emits('update:modelValue', val);
 };
 
 const loadData = async () => {
-    loading.value = true
-    try{
-        const newOptions: IOption[] = await props.request(form);
-        const curOptionLen = options.value.length;
-        options.value.splice(0, curOptionLen, ...newOptions);
-        loading.value = false
-    }catch(err){
-        loading.value = false
-    }
-}
+  loading.value = true;
+  try {
+    const newOptions: IOption[] = await props.request(form);
+    const curOptionLen = options.value.length;
+    options.value.splice(0, curOptionLen, ...newOptions);
+    loading.value = false;
+  } catch (err) {
+    loading.value = false;
+  }
+};
 
 onBeforeMount(async () => {
   if (props.options) {
     options = ref(props.options);
   } else if (props.request) {
-    loadData()
+    loadData();
   }
 });
+
+const value = computed({
+  get() {
+    return props.modelValue
+  },
+  set(value) {
+    emits('update:modelValue', value)
+  }
+})
 
 watch(
   () => {
@@ -60,7 +74,7 @@ watch(
     return cache;
   },
   () => {
-      loadData()
+    loadData();
   },
 );
 </script>
