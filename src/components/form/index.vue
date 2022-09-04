@@ -23,6 +23,7 @@
           :dataIndex="dataIndex"
           :type="valueType"
           :fieldProps="depPropsStore.get(dataIndex).fieldProps"
+          :dependencies="dependencies"
           @value-change="handleValueChange"
         ></pro-field>
       </el-form-item>
@@ -52,7 +53,7 @@
 import type { IFormItemProps, FieldType } from './interface'
 import ProField from './ProField.vue'
 import type { FormInstance } from 'element-plus'
-import { watch, onBeforeMount, reactive, ref, computed, onMounted } from 'vue'
+import { watch, onBeforeMount, reactive, ref, computed, onMounted, provide } from 'vue'
 import { isFunction } from './utils'
 
 export interface IColumn {
@@ -221,10 +222,10 @@ onBeforeMount(() => {
           fieldProps?:any
         } = {}
         if (formItemProps) {
-          cachePropsObj.formItemProps = isFunction(formItemProps) ? formItemProps(cacheForm) : {}
+          cachePropsObj.formItemProps = isFunction(formItemProps) ? formItemProps(cacheForm) : formItemProps
         }
         if (fieldProps) {
-          cachePropsObj.fieldProps = isFunction(fieldProps) ? fieldProps(cacheForm) : {}
+          cachePropsObj.fieldProps = isFunction(fieldProps) ? fieldProps(cacheForm) : fieldProps
         }
         depPropsStore.value.set(dataIndex,cachePropsObj)
         // 动态生成的formItemProps和fieldProps从depPropsStore取，因此不用放入stateCol里面
@@ -256,7 +257,7 @@ onBeforeMount(() => {
       }
     }
   })
-  console.log(depPropsStore.value.get('heihei').formItemProps,'-------depPropsStore')
-  console.log(stateCol, '-----stateCol')
+
+  provide('form',form)
 })
 </script>

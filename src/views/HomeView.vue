@@ -1,6 +1,23 @@
 <script setup lang="ts">
 import SchemaForm from '@/components/form/index.vue';
-import type { IColumn } from '@/components/form/index.vue'
+import type { IColumn } from '@/components/form/index.vue';
+const promise = () => {
+  return new Promise((resolve,reject) => {
+    setTimeout(() => {
+      resolve([{
+        label: 'aaa',
+        value: 'aaa'
+      },{
+        label: 'bbb',
+        value: 'bbb'
+      }])
+    },1000)
+  })
+}
+const test = async (form) => {
+  const haha = await promise()
+  return haha;
+}
 const columns: IColumn[] = [
   {
     label: '标题',
@@ -44,7 +61,11 @@ const columns: IColumn[] = [
   {
     label: '状态',
     dataIndex: 'state',
-    valueType: 'number',
+    valueType: 'select',
+    dependencies: ['title'],
+    fieldProps: {
+      request: test,
+    }
   },
   {
     label: '哈哈',
