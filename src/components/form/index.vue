@@ -159,12 +159,13 @@ const updateProps = (key:string,newProps:any) => {
 // form表单值改变处理函数
 const handleValueChange = (key: string, value: any) => {
   form[key] = value
+  
   const curDepCol = depColumnMap.value.get(key)
   const curDepProps = depPropsMap.value.get(key)
   if (curDepCol) {
     for (let i = 0; i < curDepCol.length; i++) {
       const { depParentSort, column } = curDepCol[i]
-      const addDepCol = column([form[key]]).map((c) => {
+      const addDepCol = column([value]).map((c) => {
         return {
           ...c,
           sort: depParentSort
@@ -189,9 +190,11 @@ const handleValueChange = (key: string, value: any) => {
       updateProps(dataIndex,cacheProps)
     }
   }
+  console.log(form,'------value----change')
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
+  console.log(form,'-------submit-----form')
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -259,5 +262,9 @@ onBeforeMount(() => {
   })
 
   provide('form',form)
+
+  watch(() => form.title,() => {
+    console.log(form,'-----form')
+  })
 })
 </script>
