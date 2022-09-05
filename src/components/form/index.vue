@@ -1,55 +1,62 @@
 <template>
-  <el-form ref="proFormRef" :model="form" :label-position="props.labelPosition">
-    <template
-      v-for="{
-        dataIndex,
-        fieldProps = {},
-        valueType,
-        formItemProps = {},
-        dependencies,
-        ...restColumns
-      } in stateCol"
-      v-bind:key="dataIndex"
-    >
-      <el-form-item
-        v-if="dependencies"
-        :prop="dataIndex"
-        v-bind="{
-          ...depPropsStore.get(dataIndex).formItemProps,
+  <el-form ref="proFormRef" :model="form" v-bind="props">
+    <slot name="header"></slot>
+    <el-row :gutter="props.gutter">
+      <el-col
+        v-for="{
+          dataIndex,
+          fieldProps = {},
+          valueType,
+          formItemProps = {},
+          dependencies,
+          span,
           ...restColumns
-        }"
+        } in stateCol"
+        v-bind:key="dataIndex"
+        :span="span || 24"
+        :style="colStyle"
       >
-      <span>{{dataIndex}}</span>
-        <pro-field
-          v-model="form[dataIndex]"
-          :dataIndex="dataIndex"
-          :type="valueType"
-          :fieldProps="depPropsStore.get(dataIndex).fieldProps"
-          :dependencies="dependencies"
-          @value-change="handleValueChange"
-        ></pro-field>
+        <el-form-item
+          v-if="dependencies"
+          :prop="dataIndex"
+          v-bind="{
+            ...depPropsStore.get(dataIndex).formItemProps,
+            ...restColumns
+          }"
+        >
+          <pro-field
+            v-model="form[dataIndex]"
+            :dataIndex="dataIndex"
+            :type="valueType"
+            :fieldProps="depPropsStore.get(dataIndex).fieldProps"
+            :dependencies="dependencies"
+            @value-change="handleValueChange"
+          ></pro-field>
+        </el-form-item>
+        <el-form-item
+          v-else
+          :prop="dataIndex"
+          v-bind="{
+            ...formItemProps,
+            ...restColumns
+          }"
+        >
+          <pro-field
+            v-model="form[dataIndex]"
+            :dataIndex="dataIndex"
+            :type="valueType"
+            :fieldProps="fieldProps"
+            @value-change="handleValueChange"
+          ></pro-field>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <slot name="footer">
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(proFormRef)">确定</el-button>
+        <el-button @click="handleCancel">取消</el-button>
       </el-form-item>
-      <el-form-item
-        v-else
-        :prop="dataIndex"
-        v-bind="{
-          ...formItemProps,
-          ...restColumns
-        }"
-      >
-      <span>{{JSON.stringify(form)}}</span>
-        <pro-field
-          v-model="form[dataIndex]"
-          :dataIndex="dataIndex"
-          :type="valueType"
-          :fieldProps="fieldProps"
-          @value-change="handleValueChange"
-        ></pro-field>
-      </el-form-item>
-    </template>
-    <el-form-item>
-      <el-button type="primary" @click="submitForm(proFormRef)">Submit</el-button>
-    </el-form-item>
+    </slot>
   </el-form>
 </template>
 
@@ -57,13 +64,7 @@
 import type { FieldType } from './interface'
 import ProField from './ProField.vue'
 import type { FormInstance } from 'element-plus'
-import {
-  watch,
-  onBeforeMount,
-  reactive,
-  ref,
-  provide,
-} from 'vue';
+import { watch, onBeforeMount, reactive, ref, provide, computed } from 'vue'
 import { isFunction } from './utils'
 
 export interface IColumn {
@@ -75,20 +76,42 @@ export interface IColumn {
   formItemProps?: any // todo：完善类型
   fieldProps?: any // todo：完善类型
   dependencies?: string[]
+  span?: number // 表单项所占栅格数
 }
 
 const props = defineProps<{
   columns: IColumn[]
+  onSubmit?: (value: any) => void
+  initialValue?: { [propsName: string]: any }
+  gutter?: number
+  // modelValue: any
   [propsName: string]: any
 }>()
+const emits = defineEmits(['onSubmit'])
 let depColumnMap = ref(new Map()) // 存储联动表单column函数
 let depPropsMap = ref(new Map()) // 存储联动表单formItemProps和fieldProps函数
+let resetFormValue = {} // 存储表单重置后的值
 const depPropsStore = ref(new Map())
-let form = reactive<{
+const form = reactive<{
   [propsName: string]: any
-}>({})
+}>(
+  props.initialValue
+    ? {
+        ...props.initialValue
+      }
+    : {}
+)
 const proFormRef = ref<FormInstance>()
 const stateCol = ref<any[]>([])
+
+// const form = computed({
+//   get() {
+//     return props.modelValue
+//   },
+//   set(value) {
+//     emits('update:modelValue', value)
+//   }
+// })
 
 const generateColumns = () => {
   const cacheForm: {
@@ -112,17 +135,17 @@ const generateColumns = () => {
         // 动态生成formItemProps或fieldProps，作用同上
         dependencies.forEach((item) => {
           const curDep = cachePropsMap.get(item) || []
-          const cacheMapItem:{
+          const cacheMapItem: {
             dataIndex: string
             formItemProps?: any
-            fieldProps?:any
+            fieldProps?: any
           } = {
-            dataIndex,
+            dataIndex
           }
-          if(isFunction(formItemProps)){
+          if (isFunction(formItemProps)) {
             cacheMapItem.formItemProps = formItemProps
           }
-          if(isFunction(fieldProps)){
+          if (isFunction(fieldProps)) {
             cacheMapItem.fieldProps = fieldProps
           }
           cachePropsMap.set(item, [...curDep, cacheMapItem])
@@ -131,7 +154,12 @@ const generateColumns = () => {
     }
   })
   return {
-    cacheForm,
+    cacheForm: props.initialValue
+      ? {
+          ...cacheForm,
+          ...props.initialValue
+        }
+      : cacheForm,
     cacheColumnMap,
     cachePropsMap
   }
@@ -162,8 +190,8 @@ const updateColumns = (sort: number, columns: any[]) => {
 }
 
 // 更新props
-const updateProps = (key:string,newProps:any) => {
-  depPropsStore.value.set(key,newProps)
+const updateProps = (key: string, newProps: any) => {
+  depPropsStore.value.set(key, newProps)
 }
 
 // form表单值改变处理函数
@@ -186,17 +214,17 @@ const handleValueChange = (key: string, value: any) => {
   if (curDepProps) {
     for (let i = 0; i < curDepProps.length; i++) {
       const { dataIndex, formItemProps, fieldProps } = curDepProps[i]
-      const cacheProps:{
-        fieldProps?:any
-        formItemProps?:any
+      const cacheProps: {
+        fieldProps?: any
+        formItemProps?: any
       } = {}
-      if(formItemProps){
+      if (formItemProps) {
         cacheProps.formItemProps = formItemProps(form)
       }
-      if(fieldProps){
+      if (fieldProps) {
         cacheProps.fieldProps = fieldProps(form)
       }
-      updateProps(dataIndex,cacheProps)
+      updateProps(dataIndex, cacheProps)
     }
   }
 }
@@ -206,6 +234,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       console.log('submit!')
+      emits('onSubmit', form)
     } else {
       console.log('error submit!', fields)
     }
@@ -214,6 +243,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 onBeforeMount(() => {
   const { cacheColumnMap, cachePropsMap, cacheForm } = generateColumns()
+  resetFormValue = cacheForm
   depColumnMap = ref(cacheColumnMap)
   depPropsMap = ref(cachePropsMap)
   props.columns.forEach((col, index) => {
@@ -226,30 +256,32 @@ onBeforeMount(() => {
       }
       if (dependencies) {
         // 动态生成formItemProps或者fieldProps,先执行获得初始值
-        const cachePropsObj:{
-          formItemProps?:any
-          fieldProps?:any
+        const cachePropsObj: {
+          formItemProps?: any
+          fieldProps?: any
         } = {}
         if (formItemProps) {
-          cachePropsObj.formItemProps = isFunction(formItemProps) ? formItemProps(cacheForm) : formItemProps
+          cachePropsObj.formItemProps = isFunction(formItemProps)
+            ? formItemProps(cacheForm)
+            : formItemProps
         }
         if (fieldProps) {
           cachePropsObj.fieldProps = isFunction(fieldProps) ? fieldProps(cacheForm) : fieldProps
         }
-        depPropsStore.value.set(dataIndex,cachePropsObj)
+        depPropsStore.value.set(dataIndex, cachePropsObj)
         // 动态生成的formItemProps和fieldProps从depPropsStore取，因此不用放入stateCol里面
         stateCol.value.push({
           sort: index,
           dependencies,
-          ...cacheCol,
+          ...cacheCol
         })
       } else {
         // 普通column，直接塞进去
         stateCol.value.push({
-          formItemProps : formItemProps || {},
+          formItemProps: formItemProps || {},
           fieldProps: fieldProps || {},
           sort: index,
-          ...cacheCol,
+          ...cacheCol
         })
       }
     } else {
@@ -266,19 +298,49 @@ onBeforeMount(() => {
       }
     }
   })
+  console.log(stateCol,'-----stateCol')
 })
 
-const validate = async (callback:any) => {
-   await proFormRef.value?.validate(callback);
+const handleCancel = () => {
+  if (props.onCancel) {
+    props.onCancel(props.formKey || '')
   }
+}
 
-  defineExpose({
-    validate,
-  })
+const validate = async (callback: any) => {
+  await proFormRef.value?.validate(callback)
+}
 
-  provide('form',form)
+const validateField = async (fieldKey: string, callback: any) => {
+  await proFormRef.value?.validateField(fieldKey, callback)
+}
 
-  watch(() => form.title,() => {
-    console.log(form,'-----form')
-  })
+const scrollToField = (fieldKey: string) => {
+  proFormRef.value?.scrollToField(fieldKey)
+}
+
+const clearValidate = (fieldKey: string) => {
+  proFormRef.value?.clearValidate(fieldKey)
+}
+
+const resetFields = (fieldKeyArr: string[]) => {
+  proFormRef.value?.resetFields(fieldKeyArr)
+}
+
+defineExpose({
+  validate,
+  validateField,
+  scrollToField,
+  clearValidate,
+  resetFields
+})
+
+provide('form', form)
+
+watch(
+  () => form.title,
+  () => {
+    console.log(form, '-----form')
+  }
+)
 </script>
