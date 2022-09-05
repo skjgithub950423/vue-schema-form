@@ -1,21 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+// import HomeView from "../views/HomeView.vue";
+import BaseForm from "../views/BaseForm.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "home",
-      component: HomeView,
+      name: "基础表单",
+      component: BaseForm,
     },
     {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import("../views/AboutView.vue"),
+      path: "/layout",
+      name: "/layout",
+      component: () => import("../views/LayoutForm.vue"),
+    },
+    {
+      path: "/slot",
+      name: "/slot",
+      component: () => import("../views/SlotForm.vue"),
+    },
+    {
+      path: "/dependency",
+      name: "/dependency",
+      component: () => import("../views/DependencyForm.vue"),
     }
   ],
 });

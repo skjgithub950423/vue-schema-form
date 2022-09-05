@@ -20,12 +20,26 @@
     v-else-if="props.type === 'radio'"
     v-model="fieldValue"
     v-bind="props.fieldProps || {}"
-  ></el-radio-group>
+  >
+    <el-radio
+      v-for="radio in props.fieldProps?.radioGroup"
+      v-bind="radio"
+      v-bind:key="radio.label"
+      >{{ radio.title }}</el-radio
+    >
+  </el-radio-group>
   <el-checkbox-group
     v-else-if="props.type === 'checkbox'"
     v-model="fieldValue"
     v-bind="props.fieldProps || {}"
-  ></el-checkbox-group>
+  >
+    <el-checkbox
+      v-for="checkbox in props.fieldProps?.checkboxGroup"
+      v-bind="checkbox"
+      v-bind:key="checkbox.label"
+      >{{ checkbox.title }}</el-checkbox
+    >
+  </el-checkbox-group>
   <el-cascader
     v-else-if="props.type === 'cascader'"
     v-model="fieldValue"
@@ -64,9 +78,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import type { FieldType } from './interface'
-import ProSelect from './ProSelect.vue';
+import ProSelect from './ProSelect.vue'
 const props = defineProps<{
   type: FieldType
   dataIndex: string
@@ -74,11 +88,11 @@ const props = defineProps<{
     | {
         [propsName: string]: any
       }
-    | undefined,
+    | undefined
   modelValue: any
   dependencies?: string[]
 }>()
-const emits = defineEmits(['valueChange','update:modelValue'])
+const emits = defineEmits(['valueChange', 'update:modelValue'])
 
 // const fieldValue = ref(undefined);
 
@@ -94,6 +108,11 @@ const fieldValue = computed({
 watch(
   () => fieldValue.value,
   () => {
-  emits('valueChange',props.dataIndex,fieldValue.value)
+    emits('valueChange', props.dataIndex, fieldValue.value)
+  }
+)
+
+onMounted(() => {
+  console.log(props.fieldProps, '-----fieldsProps')
 })
 </script>

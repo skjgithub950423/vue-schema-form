@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeMount, ref, watch, computed } from 'vue';
+import { inject, onBeforeMount, ref, watch, computed, onMounted } from 'vue';
 export interface IOption {
   label: string;
   value: any;
@@ -24,6 +24,7 @@ const props = defineProps<{
   modelValue: any;
   dependencies?: string[];
   request?: (value: any) => IOption[];
+  options?: any[]
   [propsName: string]: any;
 }>();
 // const props = defineProps(['modelValue', 'dependencies', 'request']);
@@ -48,9 +49,9 @@ const loadData = async () => {
   }
 };
 
-onBeforeMount(async () => {
+onMounted(async () => {  
   if (props.options) {
-    options = ref(props.options);
+    options = options.value.splice(0,0,...props.options)
   } else if (props.request) {
     loadData();
   }

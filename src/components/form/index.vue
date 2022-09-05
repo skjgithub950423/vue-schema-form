@@ -336,11 +336,4 @@ defineExpose({
 })
 
 provide('form', form)
-
-watch(
-  () => form.title,
-  () => {
-    console.log(form, '-----form')
-  }
-)
 </script>
