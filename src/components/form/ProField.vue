@@ -16,11 +16,6 @@
     :dependencies="props.dependencies"
   >
   </pro-select>
-  <!-- <el-select
-    v-else-if="props.type === 'select'"
-    v-model="fieldValue"
-    v-bind="props.fieldProps || {}"
-  ></el-select> -->
   <el-radio-group
     v-else-if="props.type === 'radio'"
     v-model="fieldValue"
@@ -69,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { FieldType } from './interface'
 import ProSelect from './ProSelect.vue';
 const props = defineProps<{
@@ -80,11 +75,21 @@ const props = defineProps<{
         [propsName: string]: any
       }
     | undefined,
+  modelValue: any
   dependencies?: string[]
 }>()
-const emits = defineEmits(['valueChange'])
+const emits = defineEmits(['valueChange','update:modelValue'])
 
-const fieldValue = ref(undefined);
+// const fieldValue = ref(undefined);
+
+const fieldValue = computed({
+  get() {
+    return props.modelValue
+  },
+  set(value) {
+    emits('update:modelValue', value)
+  }
+})
 
 watch(
   () => fieldValue.value,

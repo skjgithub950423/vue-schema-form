@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import SchemaForm from '@/components/form/index.vue';
+import type { FormInstance } from 'element-plus'
 import type { IColumn } from '@/components/form/index.vue';
 const promise = () => {
   return new Promise((resolve,reject) => {
@@ -90,10 +92,21 @@ const columns: IColumn[] = [
     },
   }
 ];
+const proFormRef = ref<FormInstance>()
+const handleBtnClick = async () => {
+  await proFormRef.value?.validate((valid, fields) => {
+    if (valid) {
+      console.log('submit!')
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
 </script>
 
 <template>
   <main>
-    <SchemaForm :columns="columns"></SchemaForm>
+    <SchemaForm :columns="columns" ref="proFormRef"></SchemaForm>
+    <!-- <el-button type="primary" @click="handleBtnClick">提交</el-button> -->
   </main>
 </template>

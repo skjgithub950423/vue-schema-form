@@ -19,7 +19,9 @@
           ...restColumns
         }"
       >
+      <span>{{dataIndex}}</span>
         <pro-field
+          v-model="form[dataIndex]"
           :dataIndex="dataIndex"
           :type="valueType"
           :fieldProps="depPropsStore.get(dataIndex).fieldProps"
@@ -35,7 +37,9 @@
           ...restColumns
         }"
       >
+      <span>{{JSON.stringify(form)}}</span>
         <pro-field
+          v-model="form[dataIndex]"
           :dataIndex="dataIndex"
           :type="valueType"
           :fieldProps="fieldProps"
@@ -50,10 +54,16 @@
 </template>
 
 <script setup lang="ts">
-import type { IFormItemProps, FieldType } from './interface'
+import type { FieldType } from './interface'
 import ProField from './ProField.vue'
 import type { FormInstance } from 'element-plus'
-import { watch, onBeforeMount, reactive, ref, computed, onMounted, provide } from 'vue'
+import {
+  watch,
+  onBeforeMount,
+  reactive,
+  ref,
+  provide,
+} from 'vue';
 import { isFunction } from './utils'
 
 export interface IColumn {
@@ -158,8 +168,7 @@ const updateProps = (key:string,newProps:any) => {
 
 // form表单值改变处理函数
 const handleValueChange = (key: string, value: any) => {
-  form[key] = value
-  
+  // form[key] = value
   const curDepCol = depColumnMap.value.get(key)
   const curDepProps = depPropsMap.value.get(key)
   if (curDepCol) {
@@ -190,11 +199,9 @@ const handleValueChange = (key: string, value: any) => {
       updateProps(dataIndex,cacheProps)
     }
   }
-  console.log(form,'------value----change')
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-  console.log(form,'-------submit-----form')
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -209,7 +216,6 @@ onBeforeMount(() => {
   const { cacheColumnMap, cachePropsMap, cacheForm } = generateColumns()
   depColumnMap = ref(cacheColumnMap)
   depPropsMap = ref(cachePropsMap)
-  form = reactive(cacheForm)
   props.columns.forEach((col, index) => {
     const { dataIndex, column, name, dependencies, formItemProps, fieldProps, ...restCol } = col
     if (dataIndex) {
@@ -260,11 +266,19 @@ onBeforeMount(() => {
       }
     }
   })
+})
+
+const validate = async (callback:any) => {
+   await proFormRef.value?.validate(callback);
+  }
+
+  defineExpose({
+    validate,
+  })
 
   provide('form',form)
 
   watch(() => form.title,() => {
     console.log(form,'-----form')
   })
-})
 </script>
