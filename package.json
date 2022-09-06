@@ -2,7 +2,10 @@
   "name": "@sugar950423/vue3-schema-form",
   "version": "0.0.1",
   "description": "通过配置动态生成form",
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skjgithub950423/vue-schema-form"
+  },
   "files": [
     "dist"
   ],
