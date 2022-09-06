@@ -1,5 +1,5 @@
 {
-  "name": "@sugar950423/vue-schema-form",
+  "name": "@sugar/vue3-schema-form",
   "version": "0.0.1",
   "description": "通过配置动态生成form",
   "repository": {},
@@ -35,7 +35,6 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@sugar950423/vue-schema-form": "^0.0.1",
     "element-plus": "^2.2.14",
     "pinia": "^2.0.17",
     "vue": "^3.2.37",

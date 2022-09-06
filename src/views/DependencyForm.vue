@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-// import SchemaForm from '@/components/form/index.vue'
-import { VueSchemaForm } from '@sugar950423/vue-schema-form'
+import SchemaForm from '@/components/form/index.vue'
 import type { FormInstance } from 'element-plus'
 import type { IColumn } from '@/components/form/index.vue'
 const promise = (sex: number) => {
@@ -147,7 +146,7 @@ const proFormRef = ref<FormInstance>()
 
 <template>
   <main>
-    <VueSchemaForm
+    <SchemaForm
       :columns="columns"
       ref="proFormRef"
       label-position="top"
@@ -155,6 +154,6 @@ const proFormRef = ref<FormInstance>()
       :initialValue="{ title: 'cccccc' }"
       :gutter="5"
     >
-    </VueSchemaForm>
+    </SchemaForm>
   </main>
 </template>
