@@ -1,9 +1,9 @@
 <template>
-  <SchemaForm :columns="columns" :label-width="100" @on-submit="handleFormSubmit"></SchemaForm>
+  <VueSchemaForm :columns="columns" :label-width="100" @on-submit="handleFormSubmit"></VueSchemaForm>
 </template>
 
 <script setup lang="ts">
-import SchemaForm from '@/components/form/index.vue'
+import { VueSchemaForm } from '@sugar950423/vue-schema-form'
 const columns = [
   {
     label: '姓名',

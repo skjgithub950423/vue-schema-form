@@ -51,7 +51,7 @@ const loadData = async () => {
 
 onMounted(async () => {  
   if (props.options) {
-    options = options.value.splice(0,0,...props.options)
+    options.value.splice(0,0,...props.options)
   } else if (props.request) {
     loadData();
   }

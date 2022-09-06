@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import SchemaForm from '@/components/form/index.vue'
+// import SchemaForm from '@/components/form/index.vue'
+import { VueSchemaForm } from '@sugar950423/vue-schema-form'
 import type { FormInstance } from 'element-plus'
 import type { IColumn } from '@/components/form/index.vue'
 const promise = (sex: number) => {
@@ -19,7 +20,7 @@ const promise = (sex: number) => {
           }
         ]
       } else if (sex === 2) {
-        ;[
+        result = [
           {
             label: '逛街',
             value: 'guangjie'
@@ -31,11 +32,12 @@ const promise = (sex: number) => {
         ]
       }
       resolve(result)
-    }, 5000)
+    }, 5000, sex)
   })
 }
 const test = async (form: any) => {
   const haha = await promise(form.sex)
+  console.log(haha,'-----haha')
   return haha
 }
 
@@ -145,7 +147,7 @@ const proFormRef = ref<FormInstance>()
 
 <template>
   <main>
-    <SchemaForm
+    <VueSchemaForm
       :columns="columns"
       ref="proFormRef"
       label-position="top"
@@ -153,6 +155,6 @@ const proFormRef = ref<FormInstance>()
       :initialValue="{ title: 'cccccc' }"
       :gutter="5"
     >
-    </SchemaForm>
+    </VueSchemaForm>
   </main>
 </template>
