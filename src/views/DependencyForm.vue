@@ -153,9 +153,6 @@ const proFormRef = ref<FormInstance>()
       :initialValue="{ title: 'cccccc' }"
       :gutter="5"
     >
-      <template #header>
-        <h1>测试表单</h1>
-      </template>
     </SchemaForm>
   </main>
 </template>
