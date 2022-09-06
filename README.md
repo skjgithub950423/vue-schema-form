@@ -98,7 +98,7 @@ const promise = (sex: number) => {
           }
         ]
       } else if (sex === 2) {
-        ;[
+        result = [
           {
             label: '逛街',
             value: 'guangjie'
@@ -110,7 +110,7 @@ const promise = (sex: number) => {
         ]
       }
       resolve(result)
-    }, 5000)
+    }, 5000, sex)
   })
 }
 const test = async (form: any) => {
